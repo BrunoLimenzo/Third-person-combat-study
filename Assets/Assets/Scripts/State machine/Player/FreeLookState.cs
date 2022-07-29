@@ -9,7 +9,7 @@ public class FreeLookState : PlayerBaseState
 
     public override void Enter()
     {
-
+        _playerStateMachine._InputReader.onTarget += ChangeToTargeting;
     }
 
     public override void Tick(float deltaTime)
@@ -35,9 +35,16 @@ public class FreeLookState : PlayerBaseState
 
     public override void Exit()
     {
-   
+        _playerStateMachine._InputReader.onTarget -= ChangeToTargeting;
     }
-    
+
+    private void ChangeToTargeting()
+    {
+        if(_playerStateMachine._Targeter.HasTarget())
+            _playerStateMachine.ChangeState(new TargetingState(_playerStateMachine));
+    }
+
+    #region "movement logic"
     private Vector3 CalculateMovement()
     {
         Vector3 forward = _playerStateMachine._MainCameraTransform.forward;
@@ -57,4 +64,5 @@ public class FreeLookState : PlayerBaseState
             Quaternion.LookRotation(dir),
             _playerStateMachine._RotationDamping * deltaTime);
     }
+    #endregion
 }

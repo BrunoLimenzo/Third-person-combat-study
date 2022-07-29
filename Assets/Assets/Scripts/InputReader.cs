@@ -6,7 +6,8 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
 {
     public Vector2 MovementValue { get; private set; } 
 
-    public event Action onJump;
+    public event Action onTarget;
+    public event Action onCancel;
     Controls _controls;
     void Start()
     {
@@ -17,14 +18,25 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
 
     private void OnDestroy() => _controls.Player.Disable();
 
-    public void OnJump(InputAction.CallbackContext context)
-    {
-        if (!context.performed) { return; }
-        onJump?.Invoke();
-    }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         MovementValue = context.ReadValue<Vector2>();
+    }
+
+    public void OnTarget(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            onTarget?.Invoke();
+        }
+    }
+
+    public void OnCancel(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            onCancel?.Invoke();
+        }
     }
 }
